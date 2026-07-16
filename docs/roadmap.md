@@ -9,6 +9,7 @@ Ship small, valuable slices that deliver immediate ROI for SMB users while build
 ### v0.1 — Foundation (Current)
 - [x] Repository created with professional structure
 - [x] Detailed architecture and OpenClaw integration specifications
+- [x] Initial CI/CD bootstrap (`.github/workflows/pr-check.yml` with PR validation foundation and future-proof placeholders)
 - [ ] Core entity models & shared types
 - [ ] Module registry pattern
 - [ ] Initial docs (architecture, integration, roadmap, modules)
@@ -20,6 +21,7 @@ Ship small, valuable slices that deliver immediate ROI for SMB users while build
 - Docker compose for easy local run (Postgres + app)
 - Basic Next.js dashboard shell (list + detail views for contacts)
 - Documentation: "How to connect your OpenClaw agent to the CRM"
+- Expand CI/CD with real linting, type checking, and Docker validation as code lands
 
 ### v0.3 — Pipeline & Activity Core
 - Deals / Pipeline module (stages, value tracking, kanban views)
@@ -61,3 +63,6 @@ These metrics directly support KC Optimal Computing's mission of practical, meas
 ## How to Influence the Roadmap
 
 Open issues with use-case descriptions, vertical requirements (law, construction, accounting), or OpenClaw workflow ideas. PRs that implement clean modules or improve integration quality are especially welcome.
+
+---
+**Latest autonomous update (test run 2026-07-16)**: Bootstrapped CI/CD foundation. Ready for module implementation.

@@ -1,0 +1,44 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate documentation structure
+        run: |
+          echo "🔍 Validating repository structure and docs..."
+          ls -la
+          ls -la docs/
+          echo "✅ Basic structure validation passed"
+
+      - name: Markdown lint (placeholder)
+        run: |
+          echo "🔍 Markdown/docs validation placeholder ready"
+          # Future: add markdownlint-cli or similar when content grows
+          echo "✅ Docs validation complete (expandable)"
+
+      - name: Future code checks placeholder
+        run: |
+          echo "🔍 CI foundation ready for code modules"
+          echo "- Will add: TypeScript/Next.js lint + typecheck"
+          echo "- Will add: Docker build validation"
+          echo "- Will add: OpenClaw integration tests when implemented"
+          echo "✅ Placeholder checks complete"
+
+  # Future job example (uncomment when ready):
+  # test:
+  #   runs-on: ubuntu-latest
+  #   needs: validate
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Run tests
+  #       run: echo "Tests will go here"
