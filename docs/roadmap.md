@@ -17,12 +17,12 @@ Ship small, valuable slices that deliver immediate ROI for SMB users while build
 
 ### v0.2 — First Usable Slice (Target: ~2-4 weeks)
 - [x] Docker compose for easy local run (Postgres + app) + CI validation
-- Contacts + Companies module (full CRUD, search, custom fields, relationships)
-- Basic OpenClaw tool bridge (HTTP API + reference skill implementation)
-- Simple audit logging
-- Basic Next.js dashboard shell (list + detail views for contacts)
-- Documentation: "How to connect your OpenClaw agent to the CRM"
-- Expand CI/CD with real linting, type checking, and Docker validation as code lands
+- [ ] Contacts + Companies module (full CRUD, search, custom fields, relationships)
+- [ ] Basic OpenClaw tool bridge (HTTP API + reference skill implementation)
+- [ ] Simple audit logging
+- [ ] Basic Next.js dashboard shell (list + detail views for contacts)
+- [ ] Documentation: "How to connect your OpenClaw agent to the CRM"
+- [x] Expand CI/CD with real linting, type checking, and Docker validation as code lands
 
 ### v0.3 — Pipeline & Activity Core
 - Deals / Pipeline module (stages, value tracking, kanban views)
@@ -66,4 +66,4 @@ These metrics directly support KC Optimal Computing's mission of practical, meas
 Open issues with use-case descriptions, vertical requirements (law, construction, accounting), or OpenClaw workflow ideas. PRs that implement clean modules or improve integration quality are especially welcome.
 
 ---
-**Latest autonomous update (2026-07-17)**: Added Docker compose setup and enhanced CI/CD validation. v0.2 self-hosting slice progressing.
+**Latest autonomous update (2026-07-18 CDT)**: Merged PR #2 (Docker setup + CI). v0.2 self-hosting slice advancing. Next: implement basic CRUD for Contacts module and additional OpenClaw tools.
