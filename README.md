@@ -151,9 +151,3 @@ Especially valuable:
 ## License
 
 MIT © Nicholas Beighley / KC Optimal Computing LLC
-
----
-
-**Built with ❤️ for practical, private, agent-augmented work in Kansas City and beyond.**
-
-Related projects: [Neuron](https://github.com/Nick040791/Neuron) (multi-agent orchestration), [Animus](https://github.com/Nick040791/Animus), Kanga enterprise agents.
