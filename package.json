@@ -1,0 +1,25 @@
+{
+  "name": "openclaw-crm",
+  "version": "0.2.0",
+  "description": "Modular privacy-first CRM with OpenClaw integration",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "lint": "eslint . --ext .ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "eslint": "^9",
+    "pnpm": "latest",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
