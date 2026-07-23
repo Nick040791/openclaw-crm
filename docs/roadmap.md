@@ -13,6 +13,7 @@ Ship small, valuable slices that deliver immediate ROI for SMB users while build
 - [x] Basic Contacts schema and OpenClaw tool example (autonomous update)
 - [x] Company schema + additional core tool (crm.get_contact) - autonomous run
 - [x] Enhanced CI/CD with Node.js/pnpm/TypeScript/linting support
+- [x] Basic Contacts service layer (in-memory CRUD)
 - [ ] Core entity models & shared types (expand as needed)
 - [ ] Module registry pattern
 
@@ -67,4 +68,4 @@ These metrics directly support KC Optimal Computing's mission of practical, meas
 Open issues with use-case descriptions, vertical requirements (law, construction, accounting), or OpenClaw workflow ideas. PRs that implement clean modules or improve integration quality are especially welcome.
 
 ---
-**Latest autonomous update (2026-07-22 CDT)**: Enhanced CI/CD with package.json, tsconfig.json, and improved pr-check.yml. No open PRs reviewed/merged this run. Next focus: full Contacts CRUD services or basic dashboard shell.
+**Latest autonomous update (2026-07-23 CDT)**: Added basic Contacts service (in-memory CRUD) and enhanced getContact tool with handler. No open PRs reviewed/merged this run. Next focus: Companies service, full tool bridge, or dashboard MVP.
