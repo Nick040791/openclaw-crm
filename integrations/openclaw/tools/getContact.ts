@@ -1,12 +1,13 @@
-// OpenClaw tool definition - Get single contact by ID
+// Enhanced OpenClaw tool definition integrating with Contacts service
+import contactsService from '../../../modules/contacts/service';
 
 export const getContactTool = {
   name: 'crm.get_contact',
-  description: 'Retrieve a single contact by its ID. Returns full contact details for agent context.',
+  description: 'Retrieve a specific contact by ID. Returns full details for agent context. Privacy-first: scoped access.',
   parameters: {
     type: 'object',
     properties: {
-      id: { type: 'string', description: 'UUID of the contact' }
+      id: { type: 'string', description: 'Contact ID' }
     },
     required: ['id']
   }
@@ -15,3 +16,12 @@ export const getContactTool = {
 export type GetContactParams = {
   id: string;
 };
+
+// Example handler for bridge (to be used in full implementation)
+export async function handleGetContact(params: GetContactParams) {
+  const contact = await contactsService.get(params.id);
+  if (!contact) {
+    throw new Error(`Contact with ID ${params.id} not found`);
+  }
+  return contact;
+}
