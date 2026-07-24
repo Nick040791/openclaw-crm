@@ -14,11 +14,13 @@ Ship small, valuable slices that deliver immediate ROI for SMB users while build
 - [x] Company schema + additional core tool (crm.get_contact) - autonomous run
 - [x] Enhanced CI/CD with Node.js/pnpm/TypeScript/linting support
 - [x] Basic Contacts service layer (in-memory CRUD)
+- [x] Basic Companies service layer (in-memory CRUD)
 - [ ] Core entity models & shared types (expand as needed)
 - [ ] Module registry pattern
 
 ### v0.2 — First Usable Slice (Target: ~2-4 weeks)
 - [x] Docker compose for easy local run (Postgres + app) + CI validation
+- [x] Contacts + Companies module foundations (schemas + services)
 - [ ] Contacts + Companies module (full CRUD, search, custom fields, relationships)
 - [ ] Basic OpenClaw tool bridge (HTTP API + reference skill implementation)
 - [ ] Simple audit logging
@@ -68,4 +70,4 @@ These metrics directly support KC Optimal Computing's mission of practical, meas
 Open issues with use-case descriptions, vertical requirements (law, construction, accounting), or OpenClaw workflow ideas. PRs that implement clean modules or improve integration quality are especially welcome.
 
 ---
-**Latest autonomous update (2026-07-23 CDT)**: Added basic Contacts service (in-memory CRUD) and enhanced getContact tool with handler. No open PRs reviewed/merged this run. Next focus: Companies service, full tool bridge, or dashboard MVP.
+**Latest autonomous update (2026-07-24 CDT)**: Added Companies service layer and createCompany tool. No open PRs. Progress on v0.2 Contacts+Companies foundations. Next: full CRUD relations, tool handlers, or dashboard shell.
