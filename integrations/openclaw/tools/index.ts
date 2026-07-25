@@ -39,36 +39,18 @@ export type { SearchCompaniesParams } from './searchCompanies';
 export { updateCompanyTool, handleUpdateCompany } from './updateCompany';
 export type { UpdateCompanyParams } from './updateCompany';
 
-/** Ordered list of tool definitions for registration with OpenClaw */
-export const toolDefinitions = [
-  // Contacts
-  (await import('./createContact')).createContactTool,
-  (await import('./getContact')).getContactTool,
-  (await import('./searchContacts')).searchContactsTool,
-  (await import('./updateContact')).updateContactTool,
-  (await import('./deleteContact')).deleteContactTool,
-  // Companies
-  (await import('./createCompany')).createCompanyTool,
-  (await import('./getCompany')).getCompanyTool,
-  (await import('./searchCompanies')).searchCompaniesTool,
-  (await import('./updateCompany')).updateCompanyTool,
-] as const;
+import { createContactTool, handleCreateContact } from './createContact';
+import { getContactTool, handleGetContact } from './getContact';
+import { searchContactsTool, handleSearchContacts } from './searchContacts';
+import { updateContactTool, handleUpdateContact } from './updateContact';
+import { deleteContactTool, handleDeleteContact } from './deleteContact';
+import { createCompanyTool, handleCreateCompany } from './createCompany';
+import { getCompanyTool, handleGetCompany } from './getCompany';
+import { searchCompaniesTool, handleSearchCompanies } from './searchCompanies';
+import { updateCompanyTool, handleUpdateCompany } from './updateCompany';
 
-/** Synchronous catalog of tool name → handler for the bridge dispatcher */
-import { handleCreateContact } from './createContact';
-import { handleGetContact } from './getContact';
-import { handleSearchContacts } from './searchContacts';
-import { handleUpdateContact } from './updateContact';
-import { handleDeleteContact } from './deleteContact';
-import { handleCreateCompany } from './createCompany';
-import { handleGetCompany } from './getCompany';
-import { handleSearchCompanies } from './searchCompanies';
-import { handleUpdateCompany } from './updateCompany';
-
-export const toolHandlers: Record<
-  string,
-  (params: any) => Promise<unknown>
-> = {
+/** Synchronous map of tool name → handler for the bridge dispatcher */
+export const toolHandlers: Record<string, (params: any) => Promise<unknown>> = {
   'crm.create_contact': handleCreateContact,
   'crm.get_contact': handleGetContact,
   'crm.search_contacts': handleSearchContacts,
@@ -80,17 +62,7 @@ export const toolHandlers: Record<
   'crm.update_company': handleUpdateCompany,
 };
 
-/** Static list of tool definition objects (no top-level await) for simple consumers */
-import { createContactTool } from './createContact';
-import { getContactTool } from './getContact';
-import { searchContactsTool } from './searchContacts';
-import { updateContactTool } from './updateContact';
-import { deleteContactTool } from './deleteContact';
-import { createCompanyTool } from './createCompany';
-import { getCompanyTool } from './getCompany';
-import { searchCompaniesTool } from './searchCompanies';
-import { updateCompanyTool } from './updateCompany';
-
+/** Ordered list of tool definition objects for registration with OpenClaw */
 export const allTools = [
   createContactTool,
   getContactTool,
@@ -102,3 +74,5 @@ export const allTools = [
   searchCompaniesTool,
   updateCompanyTool,
 ] as const;
+
+export type ToolName = keyof typeof toolHandlers;
