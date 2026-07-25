@@ -21,6 +21,8 @@ Ship small, valuable slices that deliver immediate ROI for SMB users while build
 ### v0.2 — First Usable Slice (Target: ~2-4 weeks)
 - [x] Docker compose for easy local run (Postgres + app) + CI validation
 - [x] Contacts + Companies module foundations (schemas + services)
+- [x] OpenClaw tool definitions + handlers for Contacts & Companies (create/get/search/update + deleteContact with confirm guard)
+- [x] Central tool catalog (`integrations/openclaw/tools/index.ts`) for bridge registration
 - [ ] Contacts + Companies module (full CRUD, search, custom fields, relationships)
 - [ ] Basic OpenClaw tool bridge (HTTP API + reference skill implementation)
 - [ ] Simple audit logging
@@ -70,4 +72,4 @@ These metrics directly support KC Optimal Computing's mission of practical, meas
 Open issues with use-case descriptions, vertical requirements (law, construction, accounting), or OpenClaw workflow ideas. PRs that implement clean modules or improve integration quality are especially welcome.
 
 ---
-**Latest autonomous update (2026-07-24 CDT)**: Added Companies service layer and createCompany tool. No open PRs. Progress on v0.2 Contacts+Companies foundations. Next: full CRUD relations, tool handlers, or dashboard shell.
+**Latest autonomous update (2026-07-25 CDT)**: Expanded OpenClaw tool catalog with full handlers (create/get/search/update for contacts & companies; deleteContact with confirm safety). Added service-layer delete methods. Central `tools/index.ts` ready for bridge. No open PRs at start of run. Next recommended: HTTP tool bridge stub, contact↔company relationship helpers, or simple dashboard shell.

@@ -1,20 +1,30 @@
-// OpenClaw tool definition for creating a new company
-// Aligns with modules/companies/schema.ts for consistency
+// OpenClaw tool definition + handler for creating a new company
+// Aligns with modules/companies/schema.ts
+
+import companiesService from '../../../modules/companies/service';
 
 export const createCompanyTool = {
   name: 'crm.create_company',
-  description: 'Create a new company record. Returns the created company ID. Privacy-first: minimal required fields.',
+  description:
+    'Create a new company record. Returns the created company (including ID). Privacy-first: only name is required.',
   parameters: {
     type: 'object',
     properties: {
       name: { type: 'string', description: 'Company name' },
       domain: { type: 'string', description: 'Company domain or website' },
       industry: { type: 'string', description: 'Industry sector' },
-      size: { type: 'string', enum: ['1-10', '11-50', '51-200', '201-500', '500+'], description: 'Company size range' },
-      customFields: { type: 'object', description: 'Flexible additional data' }
+      size: {
+        type: 'string',
+        enum: ['1-10', '11-50', '51-200', '201-500', '500+'],
+        description: 'Company size range',
+      },
+      customFields: {
+        type: 'object',
+        description: 'Flexible additional data',
+      },
     },
-    required: ['name']
-  }
+    required: ['name'],
+  },
 } as const;
 
 export type CreateCompanyParams = {
@@ -22,7 +32,14 @@ export type CreateCompanyParams = {
   domain?: string;
   industry?: string;
   size?: '1-10' | '11-50' | '51-200' | '201-500' | '500+';
-  customFields?: Record<string, any>;
+  customFields?: Record<string, unknown>;
 };
 
-// Note: In full implementation, this would validate against Zod schema and call service layer.
+export async function handleCreateCompany(params: CreateCompanyParams) {
+  const company = await companiesService.create(params);
+  return {
+    success: true,
+    company,
+    message: `Company created with id ${company.id}`,
+  };
+}
