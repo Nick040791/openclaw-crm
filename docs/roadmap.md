@@ -23,11 +23,12 @@ Ship small, valuable slices that deliver immediate ROI for SMB users while build
 - [x] Contacts + Companies module foundations (schemas + services)
 - [x] OpenClaw tool definitions + handlers for Contacts & Companies (create/get/search/update + deleteContact with confirm guard)
 - [x] Central tool catalog (`integrations/openclaw/tools/index.ts`) for bridge registration
+- [x] Basic HTTP tool bridge stub (`integrations/openclaw/bridge/httpServer.ts`) — health, /tools, /tools/invoke
 - [ ] Contacts + Companies module (full CRUD, search, custom fields, relationships)
-- [ ] Basic OpenClaw tool bridge (HTTP API + reference skill implementation)
+- [ ] Auth + rate limiting on the bridge; example OpenClaw skill
 - [ ] Simple audit logging
 - [ ] Basic Next.js dashboard shell (list + detail views for contacts)
-- [ ] Documentation: "How to connect your OpenClaw agent to the CRM"
+- [ ] Documentation: "How to connect your OpenClaw agent to the CRM" (partially advanced)
 - [x] Expand CI/CD with real linting, type checking, and Docker validation as code lands
 
 ### v0.3 — Pipeline & Activity Core
@@ -72,4 +73,4 @@ These metrics directly support KC Optimal Computing's mission of practical, meas
 Open issues with use-case descriptions, vertical requirements (law, construction, accounting), or OpenClaw workflow ideas. PRs that implement clean modules or improve integration quality are especially welcome.
 
 ---
-**Latest autonomous update (2026-07-25 CDT)**: Expanded OpenClaw tool catalog with full handlers (create/get/search/update for contacts & companies; deleteContact with confirm safety). Added service-layer delete methods. Central `tools/index.ts` ready for bridge. No open PRs at start of run. Next recommended: HTTP tool bridge stub, contact↔company relationship helpers, or simple dashboard shell.
+**Latest autonomous update (2026-07-26 CDT)**: Added HTTP tool bridge stub (`integrations/openclaw/bridge/httpServer.ts`) exposing `/health`, `/tools`, and `/tools/invoke`. Wired `pnpm bridge`. Updated integration docs and roadmap. No open PRs at start of run; this work shipped via PR. Next recommended: bridge auth + example OpenClaw skill, contact↔company relationship helpers, deleteCompany tool + confirm guard, or simple dashboard shell.

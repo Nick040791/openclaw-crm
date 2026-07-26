@@ -63,6 +63,30 @@ Since OpenClaw already handles the channel abstraction, the CRM should:
 - Allow agents to initiate messages in the customer's preferred channel ("Send proposal to client via WhatsApp")
 - Thread conversations across channels where possible (link WhatsApp thread to email thread via contact).
 
+## HTTP Tool Bridge (v0.2 stub)
+
+A minimal Node HTTP server lives at `integrations/openclaw/bridge/httpServer.ts`.
+
+```bash
+pnpm bridge          # default :3100
+BRIDGE_PORT=3200 pnpm bridge
+```
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| GET | `/health` | Liveness + tool count |
+| GET | `/tools` | Full catalog (name, description, parameters) |
+| POST | `/tools/invoke` | `{ "name": "crm.search_contacts", "arguments": { ... } }` |
+
+All tools currently registered in `integrations/openclaw/tools/index.ts` are available:
+
+- Contacts: create, get, search, update, delete (delete requires `confirm: true`)
+- Companies: create, get, search, update
+
+**Security note**: The stub has no authentication. Production deployments must add API keys, mTLS, or equivalent and log agent identity on every mutation.
+
+See `integrations/openclaw/bridge/README.md` for details.
+
 ## Reference: Tool Schema Example (TypeScript / JSON Schema)
 
 ```ts
@@ -106,7 +130,7 @@ services:
     ...
 ```
 
-Configure your OpenClaw `~/.openclaw/openclaw.json` or agent config to include the CRM tools/skills.
+Configure your OpenClaw `~/.openclaw/openclaw.json` or agent config to include the CRM tools/skills pointing at the bridge (`http://host:3100`).
 
 ## Security Notes for Agent Access
 
@@ -117,8 +141,8 @@ Configure your OpenClaw `~/.openclaw/openclaw.json` or agent config to include t
 
 ## Next Steps for Integration
 
-1. Define full OpenAPI spec for v0.2 tools
-2. Implement HTTP bridge + example OpenClaw skill (Node or Python)
+1. Harden the HTTP bridge (auth, rate limits, structured audit log)
+2. Publish an example OpenClaw skill that wraps `/tools/invoke`
 3. Add memory injection helper
 4. Test end-to-end with a real OpenClaw channel (e.g. local Slack or Discord test workspace)
 5. Document exact configuration steps for end users
