@@ -39,6 +39,9 @@ export type { SearchCompaniesParams } from './searchCompanies';
 export { updateCompanyTool, handleUpdateCompany } from './updateCompany';
 export type { UpdateCompanyParams } from './updateCompany';
 
+export { deleteCompanyTool, handleDeleteCompany } from './deleteCompany';
+export type { DeleteCompanyParams } from './deleteCompany';
+
 import { createContactTool, handleCreateContact } from './createContact';
 import { getContactTool, handleGetContact } from './getContact';
 import { searchContactsTool, handleSearchContacts } from './searchContacts';
@@ -48,6 +51,7 @@ import { createCompanyTool, handleCreateCompany } from './createCompany';
 import { getCompanyTool, handleGetCompany } from './getCompany';
 import { searchCompaniesTool, handleSearchCompanies } from './searchCompanies';
 import { updateCompanyTool, handleUpdateCompany } from './updateCompany';
+import { deleteCompanyTool, handleDeleteCompany } from './deleteCompany';
 
 /** Synchronous map of tool name → handler for the bridge dispatcher */
 export const toolHandlers: Record<string, (params: any) => Promise<unknown>> = {
@@ -60,6 +64,7 @@ export const toolHandlers: Record<string, (params: any) => Promise<unknown>> = {
   'crm.get_company': handleGetCompany,
   'crm.search_companies': handleSearchCompanies,
   'crm.update_company': handleUpdateCompany,
+  'crm.delete_company': handleDeleteCompany,
 };
 
 /** Ordered list of tool definition objects for registration with OpenClaw */
@@ -73,6 +78,7 @@ export const allTools = [
   getCompanyTool,
   searchCompaniesTool,
   updateCompanyTool,
+  deleteCompanyTool,
 ] as const;
 
 export type ToolName = keyof typeof toolHandlers;
