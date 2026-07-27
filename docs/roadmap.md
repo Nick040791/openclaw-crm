@@ -21,7 +21,7 @@ Ship small, valuable slices that deliver immediate ROI for SMB users while build
 ### v0.2 — First Usable Slice (Target: ~2-4 weeks)
 - [x] Docker compose for easy local run (Postgres + app) + CI validation
 - [x] Contacts + Companies module foundations (schemas + services)
-- [x] OpenClaw tool definitions + handlers for Contacts & Companies (create/get/search/update + deleteContact with confirm guard)
+- [x] OpenClaw tool definitions + handlers for Contacts & Companies (create/get/search/update + deleteContact/deleteCompany with confirm guard)
 - [x] Central tool catalog (`integrations/openclaw/tools/index.ts`) for bridge registration
 - [x] Basic HTTP tool bridge stub (`integrations/openclaw/bridge/httpServer.ts`) — health, /tools, /tools/invoke
 - [ ] Contacts + Companies module (full CRUD, search, custom fields, relationships)
@@ -73,4 +73,4 @@ These metrics directly support KC Optimal Computing's mission of practical, meas
 Open issues with use-case descriptions, vertical requirements (law, construction, accounting), or OpenClaw workflow ideas. PRs that implement clean modules or improve integration quality are especially welcome.
 
 ---
-**Latest autonomous update (2026-07-26 CDT)**: Added HTTP tool bridge stub (`integrations/openclaw/bridge/httpServer.ts`) exposing `/health`, `/tools`, and `/tools/invoke`. Wired `pnpm bridge`. Updated integration docs and roadmap. No open PRs at start of run; this work shipped via PR. Next recommended: bridge auth + example OpenClaw skill, contact↔company relationship helpers, deleteCompany tool + confirm guard, or simple dashboard shell.
+**Latest autonomous update (2026-07-27 CDT)**: Added `crm.delete_company` tool with explicit `confirm: true` safety guard (mirrors delete_contact). Completes the Companies mutation surface for the current tool catalog. No open PRs at start of run. Next recommended: bridge auth + rate limiting + example OpenClaw skill, contact↔company relationship helpers (list contacts by companyId), simple audit log stub, or basic Next.js dashboard shell.
