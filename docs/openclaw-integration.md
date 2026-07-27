@@ -81,7 +81,7 @@ BRIDGE_PORT=3200 pnpm bridge
 All tools currently registered in `integrations/openclaw/tools/index.ts` are available:
 
 - Contacts: create, get, search, update, delete (delete requires `confirm: true`)
-- Companies: create, get, search, update
+- Companies: create, get, search, update, delete (delete requires `confirm: true`)
 
 **Security note**: The stub has no authentication. Production deployments must add API keys, mTLS, or equivalent and log agent identity on every mutation.
 
