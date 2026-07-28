@@ -36,6 +36,20 @@ export const contactsService = {
       .slice(0, limit);
   },
 
+  /**
+   * Relationship helper: list contacts linked to a company.
+   * Keeps the join logic inside the Contacts module (strict modularity).
+   */
+  async listByCompanyId(companyId: string, limit = 20): Promise<Contact[]> {
+    if (!companyId || typeof companyId !== 'string') {
+      return [];
+    }
+    const capped = Math.min(Math.max(1, limit), 50);
+    return contacts
+      .filter((c) => c.companyId === companyId)
+      .slice(0, capped);
+  },
+
   async update(id: string, data: unknown): Promise<Contact | null> {
     const index = contacts.findIndex((c) => c.id === id);
     if (index === -1) return null;

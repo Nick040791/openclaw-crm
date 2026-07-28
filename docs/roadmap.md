@@ -24,6 +24,8 @@ Ship small, valuable slices that deliver immediate ROI for SMB users while build
 - [x] OpenClaw tool definitions + handlers for Contacts & Companies (create/get/search/update + deleteContact/deleteCompany with confirm guard)
 - [x] Central tool catalog (`integrations/openclaw/tools/index.ts`) for bridge registration
 - [x] Basic HTTP tool bridge stub (`integrations/openclaw/bridge/httpServer.ts`) — health, /tools, /tools/invoke
+- [x] Contact↔Company relationship helper (`listByCompanyId` + `crm.list_contacts_by_company` tool)
+- [x] Schema ID types aligned with service-generated opaque string IDs (not strict UUID)
 - [ ] Contacts + Companies module (full CRUD, search, custom fields, relationships)
 - [ ] Auth + rate limiting on the bridge; example OpenClaw skill
 - [ ] Simple audit logging
@@ -73,4 +75,4 @@ These metrics directly support KC Optimal Computing's mission of practical, meas
 Open issues with use-case descriptions, vertical requirements (law, construction, accounting), or OpenClaw workflow ideas. PRs that implement clean modules or improve integration quality are especially welcome.
 
 ---
-**Latest autonomous update (2026-07-27 CDT)**: Added `crm.delete_company` tool with explicit `confirm: true` safety guard (mirrors delete_contact). Completes the Companies mutation surface for the current tool catalog. No open PRs at start of run. Next recommended: bridge auth + rate limiting + example OpenClaw skill, contact↔company relationship helpers (list contacts by companyId), simple audit log stub, or basic Next.js dashboard shell.
+**Latest autonomous update (2026-07-28 CDT)**: Added contact↔company relationship helper (`contactsService.listByCompanyId` + OpenClaw tool `crm.list_contacts_by_company`). Fixed Contact/Company schema ID fields to accept opaque service-generated strings instead of strict UUIDs (prevents validation failures on create). No open PRs at start of run. Next recommended: bridge auth + rate limiting + example OpenClaw skill, simple audit log stub, or basic Next.js dashboard shell.
