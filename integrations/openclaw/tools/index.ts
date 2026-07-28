@@ -27,6 +27,12 @@ export type { UpdateContactParams } from './updateContact';
 export { deleteContactTool, handleDeleteContact } from './deleteContact';
 export type { DeleteContactParams } from './deleteContact';
 
+export {
+  listContactsByCompanyTool,
+  handleListContactsByCompany,
+} from './listContactsByCompany';
+export type { ListContactsByCompanyParams } from './listContactsByCompany';
+
 export { createCompanyTool, handleCreateCompany } from './createCompany';
 export type { CreateCompanyParams } from './createCompany';
 
@@ -47,6 +53,10 @@ import { getContactTool, handleGetContact } from './getContact';
 import { searchContactsTool, handleSearchContacts } from './searchContacts';
 import { updateContactTool, handleUpdateContact } from './updateContact';
 import { deleteContactTool, handleDeleteContact } from './deleteContact';
+import {
+  listContactsByCompanyTool,
+  handleListContactsByCompany,
+} from './listContactsByCompany';
 import { createCompanyTool, handleCreateCompany } from './createCompany';
 import { getCompanyTool, handleGetCompany } from './getCompany';
 import { searchCompaniesTool, handleSearchCompanies } from './searchCompanies';
@@ -60,6 +70,7 @@ export const toolHandlers: Record<string, (params: any) => Promise<unknown>> = {
   'crm.search_contacts': handleSearchContacts,
   'crm.update_contact': handleUpdateContact,
   'crm.delete_contact': handleDeleteContact,
+  'crm.list_contacts_by_company': handleListContactsByCompany,
   'crm.create_company': handleCreateCompany,
   'crm.get_company': handleGetCompany,
   'crm.search_companies': handleSearchCompanies,
@@ -74,6 +85,7 @@ export const allTools = [
   searchContactsTool,
   updateContactTool,
   deleteContactTool,
+  listContactsByCompanyTool,
   createCompanyTool,
   getCompanyTool,
   searchCompaniesTool,
