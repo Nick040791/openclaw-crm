@@ -26,9 +26,10 @@ Ship small, valuable slices that deliver immediate ROI for SMB users while build
 - [x] Basic HTTP tool bridge stub (`integrations/openclaw/bridge/httpServer.ts`) — health, /tools, /tools/invoke
 - [x] Contact↔Company relationship helper (`listByCompanyId` + `crm.list_contacts_by_company` tool)
 - [x] Schema ID types aligned with service-generated opaque string IDs (not strict UUID)
+- [x] Bridge hardening: optional API-key auth, per-client rate limiting, structured audit log + `/audit` endpoint
 - [ ] Contacts + Companies module (full CRUD, search, custom fields, relationships)
-- [ ] Auth + rate limiting on the bridge; example OpenClaw skill
-- [ ] Simple audit logging
+- [ ] Example OpenClaw skill wrapping the bridge
+- [ ] Persistent audit sink (beyond in-memory ring)
 - [ ] Basic Next.js dashboard shell (list + detail views for contacts)
 - [ ] Documentation: "How to connect your OpenClaw agent to the CRM" (partially advanced)
 - [x] Expand CI/CD with real linting, type checking, and Docker validation as code lands
@@ -75,4 +76,4 @@ These metrics directly support KC Optimal Computing's mission of practical, meas
 Open issues with use-case descriptions, vertical requirements (law, construction, accounting), or OpenClaw workflow ideas. PRs that implement clean modules or improve integration quality are especially welcome.
 
 ---
-**Latest autonomous update (2026-07-28 CDT)**: Added contact↔company relationship helper (`contactsService.listByCompanyId` + OpenClaw tool `crm.list_contacts_by_company`). Fixed Contact/Company schema ID fields to accept opaque service-generated strings instead of strict UUIDs (prevents validation failures on create). No open PRs at start of run. Next recommended: bridge auth + rate limiting + example OpenClaw skill, simple audit log stub, or basic Next.js dashboard shell.
+**Latest autonomous update (2026-07-29 CDT)**: Hardened the OpenClaw HTTP bridge with optional `BRIDGE_API_KEY` auth, per-client rate limiting (`BRIDGE_RATE_LIMIT_RPM`), structured in-memory audit log (params hashed, optional agentId), and `GET /audit`. No open PRs at start of run. Next recommended: example OpenClaw skill that wraps `/tools/invoke`, persistent audit sink, or basic Next.js dashboard shell for contacts.

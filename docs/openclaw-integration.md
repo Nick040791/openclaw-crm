@@ -63,27 +63,31 @@ Since OpenClaw already handles the channel abstraction, the CRM should:
 - Allow agents to initiate messages in the customer's preferred channel ("Send proposal to client via WhatsApp")
 - Thread conversations across channels where possible (link WhatsApp thread to email thread via contact).
 
-## HTTP Tool Bridge (v0.2 stub)
+## HTTP Tool Bridge (v0.2)
 
-A minimal Node HTTP server lives at `integrations/openclaw/bridge/httpServer.ts`.
+A Node HTTP server lives at `integrations/openclaw/bridge/httpServer.ts`.
 
 ```bash
 pnpm bridge          # default :3100
-BRIDGE_PORT=3200 pnpm bridge
+BRIDGE_PORT=3200 BRIDGE_API_KEY=dev-secret pnpm bridge
 ```
 
-| Method | Path | Purpose |
-|--------|------|---------|
-| GET | `/health` | Liveness + tool count |
-| GET | `/tools` | Full catalog (name, description, parameters) |
-| POST | `/tools/invoke` | `{ "name": "crm.search_contacts", "arguments": { ... } }` |
+| Method | Path | Auth | Purpose |
+|--------|------|------|---------|
+| GET | `/health` | No | Liveness + tool count + flags |
+| GET | `/tools` | Optional* | Full catalog (name, description, parameters) |
+| POST | `/tools/invoke` | Optional* | `{ "name": "crm.search_contacts", "arguments": { ... }, "agentId"?: "..." }` |
+| GET | `/audit?limit=20` | Optional* | Recent structured audit entries |
+
+\* When `BRIDGE_API_KEY` is set, send `Authorization: Bearer <key>` or `X-API-Key: <key>`. Rate limit defaults to 60 req/min per client IP (`BRIDGE_RATE_LIMIT_RPM`).
 
 All tools currently registered in `integrations/openclaw/tools/index.ts` are available:
 
 - Contacts: create, get, search, update, delete (delete requires `confirm: true`)
 - Companies: create, get, search, update, delete (delete requires `confirm: true`)
+- Relationship: `crm.list_contacts_by_company`
 
-**Security note**: The stub has no authentication. Production deployments must add API keys, mTLS, or equivalent and log agent identity on every mutation.
+**Audit**: every invoke records timestamp, tool, outcome, duration, client, optional agentId, and a short hash of parameters (raw argument values are not retained in the audit ring).
 
 See `integrations/openclaw/bridge/README.md` for details.
 
@@ -130,7 +134,7 @@ services:
     ...
 ```
 
-Configure your OpenClaw `~/.openclaw/openclaw.json` or agent config to include the CRM tools/skills pointing at the bridge (`http://host:3100`).
+Configure your OpenClaw `~/.openclaw/openclaw.json` or agent config to include the CRM tools/skills pointing at the bridge (`http://host:3100`), including the API key header when configured.
 
 ## Security Notes for Agent Access
 
@@ -141,8 +145,8 @@ Configure your OpenClaw `~/.openclaw/openclaw.json` or agent config to include t
 
 ## Next Steps for Integration
 
-1. Harden the HTTP bridge (auth, rate limits, structured audit log)
-2. Publish an example OpenClaw skill that wraps `/tools/invoke`
+1. Publish an example OpenClaw skill that wraps `/tools/invoke` (with auth header support)
+2. Persist audit log beyond the in-memory ring buffer
 3. Add memory injection helper
 4. Test end-to-end with a real OpenClaw channel (e.g. local Slack or Discord test workspace)
 5. Document exact configuration steps for end users
