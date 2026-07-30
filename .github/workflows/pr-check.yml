@@ -37,6 +37,8 @@ jobs:
           ls -la
           ls -la docs/
           ls -la integrations/openclaw/tools/
+          ls -la integrations/openclaw/bridge/
+          ls -la integrations/openclaw/skills/crm-bridge/ || echo 'skills path optional until merged'
           ls -la modules/
           echo "✅ Structure validation passed"
 
