@@ -91,6 +91,39 @@ All tools currently registered in `integrations/openclaw/tools/index.ts` are ava
 
 See `integrations/openclaw/bridge/README.md` for details.
 
+## Example OpenClaw Skill (v0.2)
+
+A ready-to-adapt client skill lives at `integrations/openclaw/skills/crm-bridge/`.
+
+| Export | Role |
+|--------|------|
+| `listTools()` | Discovers schemas from `GET /tools` |
+| `invokeTool(name, args, agentId?)` | Calls `POST /tools/invoke` |
+| `health()` | Bridge readiness |
+| `crm.*` | Convenience wrappers (search/create/update/delete contacts & companies) |
+
+**Configure via env** (never hardcode secrets):
+
+- `CRM_BRIDGE_URL` (default `http://127.0.0.1:3100`)
+- `CRM_BRIDGE_API_KEY` (must match bridge `BRIDGE_API_KEY` when set)
+- `CRM_AGENT_ID` (optional default for audit attribution)
+
+Minimal agent-host pattern:
+
+```ts
+import skill from './integrations/openclaw/skills/crm-bridge';
+
+const tools = await skill.listTools();
+// register tools with OpenClaw agent tool registry
+
+const result = await skill.invokeTool('crm.search_contacts', {
+  query: 'Acme',
+  limit: 5,
+});
+```
+
+Full details and a manual test snippet: `integrations/openclaw/skills/crm-bridge/README.md`.
+
 ## Reference: Tool Schema Example (TypeScript / JSON Schema)
 
 ```ts
@@ -145,7 +178,7 @@ Configure your OpenClaw `~/.openclaw/openclaw.json` or agent config to include t
 
 ## Next Steps for Integration
 
-1. Publish an example OpenClaw skill that wraps `/tools/invoke` (with auth header support)
+1. ~~Publish an example OpenClaw skill that wraps `/tools/invoke` (with auth header support)~~ — done: `integrations/openclaw/skills/crm-bridge/`
 2. Persist audit log beyond the in-memory ring buffer
 3. Add memory injection helper
 4. Test end-to-end with a real OpenClaw channel (e.g. local Slack or Discord test workspace)
