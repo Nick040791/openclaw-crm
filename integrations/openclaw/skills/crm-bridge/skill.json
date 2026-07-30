@@ -1,0 +1,26 @@
+{
+  "name": "openclaw-crm-bridge",
+  "version": "0.2.0",
+  "description": "Example OpenClaw skill that exposes openclaw-crm tools via the HTTP bridge. Agents can search, create, update, and delete contacts and companies conversationally.",
+  "author": "KC Optimal Computing",
+  "license": "MIT",
+  "entrypoint": "index.ts",
+  "runtime": "node",
+  "env": {
+    "CRM_BRIDGE_URL": {
+      "description": "Base URL of the openclaw-crm HTTP bridge (e.g. http://localhost:3100)",
+      "required": true,
+      "default": "http://127.0.0.1:3100"
+    },
+    "CRM_BRIDGE_API_KEY": {
+      "description": "Optional API key matching BRIDGE_API_KEY on the bridge. Sent as Authorization: Bearer.",
+      "required": false
+    },
+    "CRM_AGENT_ID": {
+      "description": "Optional stable agent identity for audit attribution (X-Agent-Id / body agentId).",
+      "required": false
+    }
+  },
+  "tools": "dynamic",
+  "tags": ["crm", "contacts", "companies", "privacy", "smb"]
+}
