@@ -69,15 +69,15 @@ A Node HTTP server lives at `integrations/openclaw/bridge/httpServer.ts`.
 
 ```bash
 pnpm bridge          # default :3100
-BRIDGE_PORT=3200 BRIDGE_API_KEY=dev-secret pnpm bridge
+BRIDGE_PORT=3200 BRIDGE_API_KEY=dev-secret BRIDGE_AUDIT_PATH=./data/audit pnpm bridge
 ```
 
 | Method | Path | Auth | Purpose |
 |--------|------|------|---------|
-| GET | `/health` | No | Liveness + tool count + flags |
+| GET | `/health` | No | Liveness + tool count + flags (incl. persistent audit) |
 | GET | `/tools` | Optional* | Full catalog (name, description, parameters) |
 | POST | `/tools/invoke` | Optional* | `{ "name": "crm.search_contacts", "arguments": { ... }, "agentId"?: "..." }` |
-| GET | `/audit?limit=20` | Optional* | Recent structured audit entries |
+| GET | `/audit?limit=20` | Optional* | Recent structured audit entries (in-memory) + persistence status |
 
 \* When `BRIDGE_API_KEY` is set, send `Authorization: Bearer <key>` or `X-API-Key: <key>`. Rate limit defaults to 60 req/min per client IP (`BRIDGE_RATE_LIMIT_RPM`).
 
@@ -87,7 +87,10 @@ All tools currently registered in `integrations/openclaw/tools/index.ts` are ava
 - Companies: create, get, search, update, delete (delete requires `confirm: true`)
 - Relationship: `crm.list_contacts_by_company`
 
-**Audit**: every invoke records timestamp, tool, outcome, duration, client, optional agentId, and a short hash of parameters (raw argument values are not retained in the audit ring).
+**Audit**:
+- Every invoke records timestamp, tool, outcome, duration, client, optional agentId, and a short hash of parameters (raw argument values are not retained).
+- **In-memory ring** (last 500 entries) powers `GET /audit`.
+- **Persistent JSONL sink** (optional): set `BRIDGE_AUDIT_PATH` to a directory or a `.jsonl` file path. Append-only; disk errors are non-fatal to tool execution. Implementation: `integrations/openclaw/bridge/auditSink.ts`.
 
 See `integrations/openclaw/bridge/README.md` for details.
 
@@ -179,9 +182,10 @@ Configure your OpenClaw `~/.openclaw/openclaw.json` or agent config to include t
 ## Next Steps for Integration
 
 1. ~~Publish an example OpenClaw skill that wraps `/tools/invoke` (with auth header support)~~ — done: `integrations/openclaw/skills/crm-bridge/`
-2. Persist audit log beyond the in-memory ring buffer
+2. ~~Persist audit log beyond the in-memory ring buffer~~ — done: optional JSONL via `BRIDGE_AUDIT_PATH` (`auditSink.ts`)
 3. Add memory injection helper
 4. Test end-to-end with a real OpenClaw channel (e.g. local Slack or Discord test workspace)
 5. Document exact configuration steps for end users
+6. Postgres-backed audit with retention and query API (post v0.2)
 
 See also the main README and architecture docs. Feedback on real OpenClaw usage patterns is highly valuable.

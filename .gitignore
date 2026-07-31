@@ -47,9 +47,10 @@ next-env.d.ts
 # Docker
 .docker/
 
-# Logs
+# Logs & local audit sink
 logs/
 *.log
+data/
 
 # OS
 Thumbs.db

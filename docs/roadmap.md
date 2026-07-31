@@ -28,8 +28,8 @@ Ship small, valuable slices that deliver immediate ROI for SMB users while build
 - [x] Schema ID types aligned with service-generated opaque string IDs (not strict UUID)
 - [x] Bridge hardening: optional API-key auth, per-client rate limiting, structured audit log + `/audit` endpoint
 - [x] Example OpenClaw skill wrapping the bridge (`integrations/openclaw/skills/crm-bridge/`)
+- [x] Persistent audit sink (JSONL append via `BRIDGE_AUDIT_PATH` / `auditSink.ts`) beyond in-memory ring
 - [ ] Contacts + Companies module (full CRUD, search, custom fields, relationships)
-- [ ] Persistent audit sink (beyond in-memory ring)
 - [ ] Basic Next.js dashboard shell (list + detail views for contacts)
 - [ ] Documentation: "How to connect your OpenClaw agent to the CRM" (partially advanced)
 - [x] Expand CI/CD with real linting, type checking, and Docker validation as code lands
@@ -76,4 +76,4 @@ These metrics directly support KC Optimal Computing's mission of practical, meas
 Open issues with use-case descriptions, vertical requirements (law, construction, accounting), or OpenClaw workflow ideas. PRs that implement clean modules or improve integration quality are especially welcome.
 
 ---
-**Latest autonomous update (2026-07-30 CDT)**: Added example OpenClaw skill at `integrations/openclaw/skills/crm-bridge/` (manifest, client with listTools/invokeTool/health + crm.* helpers, README). No open PRs at start of run. Next recommended: persistent audit sink, basic Next.js dashboard shell for contacts, or expand docs on connecting an OpenClaw agent end-to-end.
+**Latest autonomous update (2026-07-31 CDT)**: Persistent JSONL audit sink (`integrations/openclaw/bridge/auditSink.ts`) wired into the HTTP bridge via `BRIDGE_AUDIT_PATH`. In-memory ring retained for `/audit`. No open PRs at start of run. Next recommended: basic Next.js dashboard shell for contacts, module registry pattern, or end-to-end "connect OpenClaw agent" docs polish.
