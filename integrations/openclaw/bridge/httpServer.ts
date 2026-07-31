@@ -8,11 +8,13 @@
  *   GET  /health          → { status: "ok", tools: N }  (always public)
  *   GET  /tools           → list of tool definitions
  *   POST /tools/invoke    → { name: string, arguments: object } → tool result
+ *   GET  /audit?limit=20  → recent in-memory audit entries
  *
  * Security (v0.2 hardening):
  * - Optional API key via BRIDGE_API_KEY (Authorization: Bearer <key> or X-API-Key)
  * - In-memory sliding-window rate limit per client IP (BRIDGE_RATE_LIMIT_RPM)
  * - Structured audit log for every invoke (no full PII in logs by default)
+ * - Optional persistent JSONL audit sink via BRIDGE_AUDIT_PATH
  *
  * Design notes (privacy-first + agent safety):
  * - All mutations still go through module services (Zod validation + confirm guards).
@@ -21,13 +23,19 @@
  *
  * Usage (dev):
  *   pnpm bridge   # or tsx integrations/openclaw/bridge/httpServer.ts
- *   BRIDGE_PORT=3100 BRIDGE_API_KEY=dev-secret pnpm bridge
+ *   BRIDGE_PORT=3100 BRIDGE_API_KEY=dev-secret BRIDGE_AUDIT_PATH=./data/audit pnpm bridge
  */
 
 import http from 'node:http';
 import { URL } from 'node:url';
 import { createHash } from 'node:crypto';
 import { allTools, toolHandlers, type ToolName } from '../tools/index.js';
+import {
+  persistAuditEntry,
+  isPersistentAuditEnabled,
+  getAuditFilePath,
+  type AuditEntry,
+} from './auditSink.js';
 
 const PORT = Number(process.env.BRIDGE_PORT || process.env.PORT || 3100);
 const HOST = process.env.BRIDGE_HOST || '0.0.0.0';
@@ -80,18 +88,7 @@ function requireAuth(req: http.IncomingMessage): boolean {
   return provided === API_KEY;
 }
 
-// --- Lightweight audit log (structured, PII-minimized) ---
-interface AuditEntry {
-  ts: string;
-  tool: string;
-  outcome: 'success' | 'error' | 'rejected';
-  durationMs: number;
-  client: string;
-  agentId?: string;
-  paramsHash?: string;
-  error?: string;
-}
-
+// --- Lightweight in-memory audit ring (PII-minimized) ---
 const auditLog: AuditEntry[] = [];
 const MAX_AUDIT_ENTRIES = 500;
 
@@ -115,6 +112,8 @@ function recordAudit(entry: AuditEntry) {
       (entry.agentId ? ` agent=${entry.agentId}` : '') +
       (entry.error ? ` err=${entry.error}` : '')
   );
+  // Fire-and-forget persistent sink (never blocks response path on disk errors)
+  void persistAuditEntry(entry);
 }
 
 function json(res: http.ServerResponse, status: number, body: unknown) {
@@ -273,6 +272,8 @@ const server = http.createServer(async (req, res) => {
         tools: allTools.length,
         authRequired: Boolean(API_KEY),
         rateLimitRpm: RATE_LIMIT_RPM,
+        persistentAudit: isPersistentAuditEnabled(),
+        auditPath: getAuditFilePath(),
         timestamp: new Date().toISOString(),
       });
       return;
@@ -321,6 +322,8 @@ const server = http.createServer(async (req, res) => {
       json(res, 200, {
         entries: auditLog.slice(-limit).reverse(),
         totalRetained: auditLog.length,
+        persistentAudit: isPersistentAuditEnabled(),
+        auditPath: getAuditFilePath(),
       });
       return;
     }
@@ -353,6 +356,11 @@ server.listen(PORT, HOST, () => {
     console.log(`  Auth: DISABLED (set BRIDGE_API_KEY for production)`);
   }
   console.log(`  Rate limit: ${RATE_LIMIT_RPM} req/min per client`);
+  if (isPersistentAuditEnabled()) {
+    console.log(`  Persistent audit: ${getAuditFilePath()}`);
+  } else {
+    console.log(`  Persistent audit: DISABLED (set BRIDGE_AUDIT_PATH to enable)`);
+  }
 });
 
 export default server;
