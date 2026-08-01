@@ -36,6 +36,8 @@ jobs:
           echo "🔍 Validating repository structure and docs..."
           ls -la
           ls -la docs/
+          test -f docs/modules.md || (echo 'Missing docs/modules.md' && exit 1)
+          ls -la core/ || (echo 'Missing core/ (module registry)' && exit 1)
           ls -la integrations/openclaw/tools/
           ls -la integrations/openclaw/bridge/
           ls -la integrations/openclaw/skills/crm-bridge/ || echo 'skills path optional until merged'

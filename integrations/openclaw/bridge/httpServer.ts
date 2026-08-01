@@ -5,7 +5,7 @@
  * tool calls from OpenClaw agents (or any HTTP client).
  *
  * Endpoints:
- *   GET  /health          → { status: "ok", tools: N }  (always public)
+ *   GET  /health          → { status: "ok", tools: N, modules: [...] }  (always public)
  *   GET  /tools           → list of tool definitions
  *   POST /tools/invoke    → { name: string, arguments: object } → tool result
  *   GET  /audit?limit=20  → recent in-memory audit entries
@@ -36,6 +36,11 @@ import {
   getAuditFilePath,
   type AuditEntry,
 } from './auditSink.js';
+import { registerBuiltInModules } from '../../../core/register-modules.js';
+import { listModules } from '../../../core/module-registry.js';
+
+// Ensure modules are registered for health / future discovery
+registerBuiltInModules();
 
 const PORT = Number(process.env.BRIDGE_PORT || process.env.PORT || 3100);
 const HOST = process.env.BRIDGE_HOST || '0.0.0.0';
@@ -266,10 +271,17 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === 'GET' && path === '/health') {
+      const modules = listModules();
       json(res, 200, {
         status: 'ok',
         service: 'openclaw-crm-bridge',
         tools: allTools.length,
+        modules: modules.map((m) => ({
+          id: m.id,
+          name: m.name,
+          version: m.version,
+          entities: m.entities,
+        })),
         authRequired: Boolean(API_KEY),
         rateLimitRpm: RATE_LIMIT_RPM,
         persistentAudit: isPersistentAuditEnabled(),
@@ -361,6 +373,7 @@ server.listen(PORT, HOST, () => {
   } else {
     console.log(`  Persistent audit: DISABLED (set BRIDGE_AUDIT_PATH to enable)`);
   }
+  console.log(`  Modules: ${listModules().map((m) => m.id).join(', ') || '(none)'}`);
 });
 
 export default server;
