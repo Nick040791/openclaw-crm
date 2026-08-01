@@ -42,7 +42,7 @@ Traditional CRMs are either:
   - PostgreSQL (prod) + SQLite (dev/local) via Drizzle ORM
   - RBAC + audit logging + data portability (GDPR/CCPA ready patterns)
   - Docker + docker-compose for one-command self-hosting (with optional OpenClaw sidecar)
-  - Extensible module registry
+  - Extensible module registry (`core/`)
 
 ## Architecture
 
@@ -61,7 +61,7 @@ Database + Auth + Audit
 Web Dashboard (Next.js) + Admin / Reporting
 ```
 
-**Module boundaries are strict** — each module owns its domain, API surface, migrations, and UI slices. Cross-module communication goes through well-defined events or the core service layer.
+**Module boundaries are strict** — each module owns its domain, API surface, migrations, and UI slices. Cross-module communication goes through well-defined events or the core service layer. See [docs/modules.md](./docs/modules.md).
 
 ## OpenClaw Integration Details
 
@@ -81,7 +81,7 @@ Quick conceptual example (agent perspective):
 
 ## Getting Started (Developer Preview)
 
-> **Note**: This is an early skeleton. Core modules and full OpenClaw tool bridge are under active development.
+> **Note**: This is an early skeleton. Core modules and OpenClaw tool bridge are under active development (v0.2 foundations landed).
 
 ### Prerequisites
 - Node.js 22+ / 24+
@@ -93,16 +93,17 @@ Quick conceptual example (agent perspective):
 git clone https://github.com/Nick040791/openclaw-crm.git
 cd openclaw-crm
 
-# Option 1: Next.js dev (coming soon)
-# npm install && npm run dev
+# Bridge (tool API for agents)
+pnpm install
+pnpm bridge   # http://localhost:3100 — GET /health, /tools, POST /tools/invoke
 
-# Option 2: Full self-hosted with Docker
+# Full self-hosted with Docker
 cp .env.example .env
 # Edit DB credentials, OpenClaw endpoint, etc.
 docker compose up -d
 ```
 
-Then explore the docs/ folder and start implementing the first module (recommended: Contacts).
+Then explore the docs/ folder. Contacts + Companies modules and the OpenClaw bridge are the primary entry points today.
 
 ## Project Structure
 
@@ -112,19 +113,20 @@ openclaw-crm/
 ├── LICENSE
 ├── .gitignore
 ├── docker-compose.yml          # Postgres + app + optional OpenClaw
+├── core/                       # Module registry, future event bus / shared types
+│   ├── module-registry.ts
+│   └── register-modules.ts
 ├── docs/
 │   ├── architecture.md
 │   ├── openclaw-integration.md
 │   ├── roadmap.md
 │   └── modules.md
-├── modules/                 # Self-contained feature modules
+├── modules/                    # Self-contained feature modules
 │   ├── contacts/
-│   ├── deals/
-│   ├── activities/
-│   └── communications/
+│   └── companies/
 ├── integrations/
-│   └── openclaw/            # Tool definitions, bridge, manifests
-├── app/                     # Next.js App Router (future)
+│   └── openclaw/               # Tool definitions, bridge, skills
+├── app/                        # Next.js App Router (future)
 └── ...
 ```
 
@@ -132,8 +134,8 @@ openclaw-crm/
 
 See [docs/roadmap.md](./docs/roadmap.md)
 
-**v0.1 (Current)**: Repository skeleton, architecture docs, OpenClaw integration spec, initial module patterns.
-**v0.2**: Contacts + Companies module (CRUD + search), basic OpenClaw tool bridge (HTTP + example skill).
+**v0.1**: Repository skeleton, architecture docs, OpenClaw integration spec, initial module patterns, module registry.
+**v0.2**: Contacts + Companies module (CRUD + search), basic OpenClaw tool bridge (HTTP + example skill) — largely complete.
 **v0.3**: Deals/Pipeline + Activities, session memory sync, web dashboard MVP.
 **v1.0**: Production-ready self-host, RBAC, audit, full multi-channel orchestration, example law-firm / construction vertical configs.
 
@@ -141,7 +143,7 @@ See [docs/roadmap.md](./docs/roadmap.md)
 
 We welcome contributions that improve modularity, OpenClaw integration quality, privacy controls, or SMB-focused features.
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) (to be added) or open an issue/discussion.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) or open an issue/discussion.
 
 Especially valuable:
 - Real-world OpenClaw + CRM workflow feedback

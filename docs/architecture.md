@@ -10,32 +10,41 @@
 
 ## High-Level Components
 
-- **Core Layer** (`core/` or shared lib)
-  - Entity registry & base models (Contact, Deal, Activity, etc. with soft deletes, versioning)
-  - Authentication & Authorization (RBAC, organization units/teams, API keys for agents)
-  - Audit logging & data lineage
-  - Event bus (lightweight, e.g. in-memory + Redis or Postgres LISTEN/NOTIFY for prod)
-  - Configuration & feature flags per module
+- **Core Layer** (`core/`)
+  - **Module registry** (`module-registry.ts`, `register-modules.ts`): discovers modules by id, exposes metadata + public service surface without cross-module internal imports
+  - Entity registry & base models (Contact, Deal, Activity, etc. with soft deletes, versioning) — expanding
+  - Authentication & Authorization (RBAC, organization units/teams, API keys for agents) — planned
+  - Audit logging & data lineage (bridge audit today; core-wide later)
+  - Event bus (lightweight, e.g. in-memory + Redis or Postgres LISTEN/NOTIFY for prod) — planned
+  - Configuration & feature flags per module — planned
 
 - **Module Layer** (`modules/<name>/`)
-  - Own database schema / migrations (Drizzle)
-  - Repository / service layer
-  - Public API surface (REST + tRPC or typed functions)
+  - Own database schema / migrations (Drizzle when persistence lands)
+  - Repository / service layer (in-memory today)
+  - Public API surface (typed service methods; future REST + tRPC)
   - UI components / pages slice (when frontend ready)
   - Tests, seeds, and documentation
   - Optional: module-specific OpenClaw tools
 
 - **Integration Layer** (`integrations/openclaw/`)
   - Tool catalog & JSON Schema definitions
-  - Bridge service (HTTP server or stdio that OpenClaw agents can invoke)
-  - Session context provider (pulls CRM state into OpenClaw memory)
-  - Webhook receiver (OpenClaw → CRM events)
-  - Manifest / configuration examples
+  - Bridge service (HTTP server that OpenClaw agents can invoke)
+  - Session context provider (pulls CRM state into OpenClaw memory) — planned
+  - Webhook receiver (OpenClaw → CRM events) — planned
+  - Manifest / configuration examples + example skill
 
 - **Presentation Layer**
-  - Next.js App Router (server components + streaming where useful)
+  - Next.js App Router (server components + streaming where useful) — planned dashboard shell
   - Role-aware dashboards and command surfaces
   - Embeddable widgets for future OpenClaw Control UI or custom frontends
+
+## Module Registry
+
+See [modules.md](./modules.md) for the registration API and how to add a module.
+
+At process bootstrap, `registerBuiltInModules()` registers `contacts` and `companies`. Callers that need discovery (health endpoints, future admin UI) use `listModules()` / `getModule(id)` instead of hardcoding module lists.
+
+Tools still import concrete module services for type safety; the registry is the discovery and extensibility path.
 
 ## Data Model (Initial)
 
@@ -64,7 +73,7 @@ To add a new module (example: `marketing` or `legal-matters`):
 1. Create `modules/marketing/`
 2. Define schema in `modules/marketing/schema.ts`
 3. Implement service + public API
-4. Register in core module registry
+4. Register in `core/register-modules.ts`
 5. Add OpenClaw tool definitions if agent-relevant
 6. Document in docs/modules.md
 7. Add UI slice under app/(dashboard)/marketing/
