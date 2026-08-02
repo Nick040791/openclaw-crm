@@ -19,7 +19,8 @@ Ship small, valuable slices that deliver immediate ROI for SMB users while build
 - [x] Module registry pattern (`core/module-registry.ts` + bootstrap)
 
 ### v0.2 — First Usable Slice (Target: ~2-4 weeks)
-- [x] Docker compose for easy local run (Postgres + app) + CI validation
+- [x] Docker compose for easy local run (Postgres + bridge) + CI validation
+- [x] Multi-stage Dockerfile for OpenClaw HTTP bridge (non-root, healthcheck, production-minded)
 - [x] Contacts + Companies module foundations (schemas + services)
 - [x] OpenClaw tool definitions + handlers for Contacts & Companies (create/get/search/update + deleteContact/deleteCompany with confirm guard)
 - [x] Central tool catalog (`integrations/openclaw/tools/index.ts`) for bridge registration
@@ -30,10 +31,10 @@ Ship small, valuable slices that deliver immediate ROI for SMB users while build
 - [x] Example OpenClaw skill wrapping the bridge (`integrations/openclaw/skills/crm-bridge/`)
 - [x] Persistent audit sink (JSONL append via `BRIDGE_AUDIT_PATH` / `auditSink.ts`) beyond in-memory ring
 - [x] Module registry + docs (`core/`, `docs/modules.md`)
+- [x] Expand CI/CD with real type checking, structure validation (incl. Dockerfile), and Docker image build on every PR/push
 - [ ] Contacts + Companies module (full CRUD, search, custom fields, relationships) — foundations done; persistence + custom-field UX remain
 - [ ] Basic Next.js dashboard shell (list + detail views for contacts)
 - [ ] Documentation: "How to connect your OpenClaw agent to the CRM" (partially advanced)
-- [x] Expand CI/CD with real linting, type checking, and Docker validation as code lands
 
 ### v0.3 — Pipeline & Activity Core
 - Deals / Pipeline module (stages, value tracking, kanban views)
@@ -77,4 +78,4 @@ These metrics directly support KC Optimal Computing's mission of practical, meas
 Open issues with use-case descriptions, vertical requirements (law, construction, accounting), or OpenClaw workflow ideas. PRs that implement clean modules or improve integration quality are especially welcome.
 
 ---
-**Latest autonomous update (2026-08-01 CDT)**: Module registry pattern added under `core/` (`module-registry.ts`, `register-modules.ts`). Contacts and Companies registered at bootstrap. `docs/modules.md` added. Bridge health can report modules. No open PRs at start of run. Next recommended: basic Next.js dashboard shell for contacts, Postgres/Drizzle persistence for contacts/companies, or end-to-end "connect OpenClaw agent" docs polish.
+**Latest autonomous update (2026-08-02 CDT)**: Multi-stage Dockerfile for the OpenClaw HTTP bridge (non-root, healthcheck), improved docker-compose (dedicated `bridge` service + audit volume), tightened PR Check workflow (hard type-check, structure checks including Dockerfile presence, real `docker build`). No open PRs at start of run. Next recommended: basic Next.js dashboard shell for contacts, Postgres/Drizzle persistence for contacts/companies, or end-to-end "connect OpenClaw agent" docs polish.
