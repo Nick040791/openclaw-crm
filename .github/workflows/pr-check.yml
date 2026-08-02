@@ -17,42 +17,63 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'pnpm'
 
       - name: Install pnpm
         run: npm install -g pnpm
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile || echo 'No lockfile yet - installing basics'
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile
+          else
+            pnpm install
+          fi
 
       - name: Type check
-        run: pnpm type-check || echo 'Type check skipped if no tsconfig full setup'
+        run: pnpm type-check
 
       - name: Lint
-        run: pnpm lint || echo 'Lint placeholder'
+        run: |
+          # ESLint may not be fully configured yet; fail soft until ruleset lands
+          pnpm lint || echo "Lint skipped or incomplete (acceptable for current skeleton)"
 
       - name: Validate documentation and structure
         run: |
           echo "🔍 Validating repository structure and docs..."
-          ls -la
-          ls -la docs/
+          test -f README.md
+          test -f docs/architecture.md
+          test -f docs/roadmap.md
+          test -f docs/openclaw-integration.md
           test -f docs/modules.md || (echo 'Missing docs/modules.md' && exit 1)
-          ls -la core/ || (echo 'Missing core/ (module registry)' && exit 1)
-          ls -la integrations/openclaw/tools/
-          ls -la integrations/openclaw/bridge/
-          ls -la integrations/openclaw/skills/crm-bridge/ || echo 'skills path optional until merged'
-          ls -la modules/
+          test -d core/ || (echo 'Missing core/ (module registry)' && exit 1)
+          test -f core/module-registry.ts
+          test -f core/register-modules.ts
+          test -d modules/contacts/
+          test -d modules/companies/
+          test -d integrations/openclaw/tools/
+          test -d integrations/openclaw/bridge/
+          test -f integrations/openclaw/bridge/httpServer.ts
+          test -f integrations/openclaw/bridge/auditSink.ts
+          test -d integrations/openclaw/skills/crm-bridge/
+          test -f Dockerfile || (echo 'Missing Dockerfile' && exit 1)
+          test -f docker-compose.yml
           echo "✅ Structure validation passed"
 
       - name: Docker build validation
         run: |
-          echo "🔍 Testing Docker build..."
-          docker compose build --no-cache || echo "Docker placeholder - full Dockerfile coming"
-          echo "✅ Docker validation complete"
+          echo "🔍 Testing Docker image build (bridge target)..."
+          docker build -t openclaw-crm-bridge:ci .
+          echo "✅ Docker build succeeded"
 
-      - name: Tool & Schema validation
+      - name: Tool catalog smoke check
         run: |
-          echo "🔍 Validating OpenClaw tools and Zod schemas..."
-          echo "✅ Tool definitions and schemas validated"
+          echo "🔍 Validating tool catalog exports via type-check (already run) + file presence..."
+          test -f integrations/openclaw/tools/index.ts
+          test -f integrations/openclaw/tools/createContact.ts
+          test -f integrations/openclaw/tools/deleteContact.ts
+          test -f integrations/openclaw/tools/createCompany.ts
+          test -f integrations/openclaw/tools/deleteCompany.ts
+          test -f integrations/openclaw/tools/listContactsByCompany.ts
+          echo "✅ Tool surface files present"
 
-  # TODO: Add tests, security scan, etc. as project matures
+  # TODO: unit tests for schemas/services, security scan, Next.js build when app/ lands

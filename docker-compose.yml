@@ -1,5 +1,9 @@
 version: '3.8'
 
+# Local / self-host stack for openclaw-crm
+# Primary services today: Postgres (future persistence) + OpenClaw tool bridge
+# Dashboard (Next.js) will join later under the same compose file.
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -12,28 +16,58 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U crm_user"]
+      test: ["CMD-SHELL", "pg_isready -U crm_user -d openclaw_crm"]
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
-  crm:
-    build: .
+  bridge:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3100:3100"
     environment:
-      DATABASE_URL: postgresql://crm_user:crm_pass@postgres:5432/openclaw_crm
-      NODE_ENV: development
-      # OPENCLAW_GATEWAY_URL: http://openclaw:18789  # uncomment when OpenClaw added
+      NODE_ENV: production
+      BRIDGE_HOST: 0.0.0.0
+      BRIDGE_PORT: 3100
+      # Optional hardening (set in .env for real use)
+      # BRIDGE_API_KEY: ${BRIDGE_API_KEY:-}
+      # BRIDGE_RATE_LIMIT_RPM: ${BRIDGE_RATE_LIMIT_RPM:-60}
+      # BRIDGE_AUDIT_PATH: /data/audit
+      # DATABASE_URL: postgresql://crm_user:crm_pass@postgres:5432/openclaw_crm
+    volumes:
+      # Persistent audit JSONL when BRIDGE_AUDIT_PATH is set inside the container
+      - bridge_audit:/data/audit
     depends_on:
       postgres:
         condition: service_healthy
-    volumes:
-      - .:/app
-      - /app/node_modules
-    # command: npm run dev  # when package.json exists
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3100/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+
+  # Placeholder for future Next.js dashboard (app/)
+  # crm:
+  #   build: .
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     DATABASE_URL: postgresql://crm_user:crm_pass@postgres:5432/openclaw_crm
+  #     NODE_ENV: development
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
 
 volumes:
   postgres_data:
+  bridge_audit:
 
-# Note: Add OpenClaw service when ready for full stack testing
+# Optional: add OpenClaw gateway sidecar when testing full multi-channel flows
+# openclaw:
+#   image: ...
+#   ...
