@@ -85,7 +85,7 @@ Quick conceptual example (agent perspective):
 
 ### Prerequisites
 - Node.js 22+ / 24+
-- Docker & Docker Compose (recommended for DB + full stack)
+- Docker & Docker Compose (recommended for DB + bridge)
 - A running OpenClaw instance (see https://docs.openclaw.ai/)
 
 ### Quick Local Setup
@@ -93,14 +93,15 @@ Quick conceptual example (agent perspective):
 git clone https://github.com/Nick040791/openclaw-crm.git
 cd openclaw-crm
 
-# Bridge (tool API for agents)
+# Bridge only (tool API for agents) — fastest path
 pnpm install
 pnpm bridge   # http://localhost:3100 — GET /health, /tools, POST /tools/invoke
 
-# Full self-hosted with Docker
+# Self-hosted stack (Postgres + bridge image)
 cp .env.example .env
-# Edit DB credentials, OpenClaw endpoint, etc.
-docker compose up -d
+# Optional: set BRIDGE_API_KEY, BRIDGE_AUDIT_PATH, etc.
+docker compose up -d --build
+# Bridge: http://localhost:3100/health
 ```
 
 Then explore the docs/ folder. Contacts + Companies modules and the OpenClaw bridge are the primary entry points today.
@@ -111,8 +112,8 @@ Then explore the docs/ folder. Contacts + Companies modules and the OpenClaw bri
 openclaw-crm/
 ├── README.md
 ├── LICENSE
-├── .gitignore
-├── docker-compose.yml          # Postgres + app + optional OpenClaw
+├── Dockerfile                  # Multi-stage image for the OpenClaw HTTP bridge
+├── docker-compose.yml          # Postgres + bridge (+ future dashboard)
 ├── core/                       # Module registry, future event bus / shared types
 │   ├── module-registry.ts
 │   └── register-modules.ts
@@ -135,7 +136,7 @@ openclaw-crm/
 See [docs/roadmap.md](./docs/roadmap.md)
 
 **v0.1**: Repository skeleton, architecture docs, OpenClaw integration spec, initial module patterns, module registry.
-**v0.2**: Contacts + Companies module (CRUD + search), basic OpenClaw tool bridge (HTTP + example skill) — largely complete.
+**v0.2**: Contacts + Companies module (CRUD + search), basic OpenClaw tool bridge (HTTP + example skill) — largely complete; Docker image + tightened CI landed.
 **v0.3**: Deals/Pipeline + Activities, session memory sync, web dashboard MVP.
 **v1.0**: Production-ready self-host, RBAC, audit, full multi-channel orchestration, example law-firm / construction vertical configs.
 
